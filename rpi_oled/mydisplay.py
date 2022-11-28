@@ -32,9 +32,7 @@ height = oled.height
 image = Image.new('1', (width, height))
 draw = ImageDraw.Draw(image)
 draw.rectangle((0, 0, width, height), outline=0, fill=0)
-padding = -2
-top = padding
-bottom = height-padding
+top = -2
 x = 0
 
 time_font = ImageFont.truetype(path + 'fonts/Roboto-Regular.ttf', 11)
@@ -114,8 +112,8 @@ def press():
 def button(cmd):
     if cmd == "shutdown":
         draw.rectangle((0, 0, width, height), outline=0, fill=0)
-        draw.text((x+4, top+20), "Press once more to",  font=font3, fill=255)
-        draw.text((x+4, top+40), "SHUTDOWN",  font=font3, fill=255)
+        draw.text((4, 18), "Press once more to",  font=font3, fill=255)
+        draw.text((4, 38), "SHUTDOWN",  font=font3, fill=255)
         time.sleep(0.2)
         com = press()
         if com == "shutdown":
@@ -129,8 +127,8 @@ def button(cmd):
             
     elif cmd == "reboot":
         draw.rectangle((0, 0, width, height), outline=0, fill=0)
-        draw.text((x+4, top+20), "Press once more to",  font=font3, fill=255)
-        draw.text((x+4, top+40), "REBOOT",  font=font3, fill=255)
+        draw.text((4, 18), "Press once more to",  font=font3, fill=255)
+        draw.text((4, 38), "REBOOT",  font=font3, fill=255)
         time.sleep(0.2)
         com = press()
         if com == "reboot":
@@ -177,6 +175,7 @@ while True:
                 m = ((i * 2) + j)
                 if matrix[m]  == "toggle":
                     page = page + 1
+                    time.sleep(0.3)
                 else: button(matrix[m])
    
         GPIO.output(COL[j], 0)
