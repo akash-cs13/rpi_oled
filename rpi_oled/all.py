@@ -3,6 +3,7 @@ import time
 import board
 import digitalio
 import subprocess
+from threading import Thread
 import json
 import adafruit_ssd1306
 import RPi.GPIO as GPIO
@@ -18,14 +19,12 @@ f.close()
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-path = os.path.dirname(__file__) + '/'
-
 oled_reset = digitalio.DigitalInOut(board.D4)
 WIDTH = 128
 HEIGHT = 64
 LOOPTIME = 1.0
 
-matrix = ("toggle", "hotspot", "shutdown", "reboot")
+matrix = ("hotspot", "toggle", "shutdown", "reboot")
 
 COL = (25, 8) #coloumn gpio pins
 ROW = (23, 24) #row gpio pins
@@ -111,30 +110,49 @@ def notification():
         draw.text((113, 0), "\ue91f",  font=icon_font, fill=255)
 
 
-def wait_screen(cmd):
+def wait_screen( cmd2, cmd1 = "Want to"):
     draw.rectangle((0, 0, width, height), outline=0, fill=0)
-    draw.text((4, 18), "Press once more to",  font=roboto_light, fill=255)
-    draw.text((4, 38), str(cmd).upper(),  font=roboto_light, fill=255)
+    draw.text((4, 18), cmd1,  font=roboto_light, fill=255)
+    draw.text((4, 38), str(cmd2 + " ?").upper(),  font=roboto_light, fill=255)
+    draw.text((22, 43), "\ue918",  font=icon_font.font_variant(size=18), fill=255)
+    draw.text((91, 43), "\ue913",  font=icon_font.font_variant(size=18), fill=255)
 
 
 page = 0
 wait_shutdown = [False, False]
 wait_reboot = [False, False]
+wait_hotspot = [False, False, False]
 
 
 def display():
-    global page, wait_shutdown, wait_reboot
+    global page, wait_shutdown, wait_reboot, wait_hotspot
     semi_colon = True
     while True:
         if wait_shutdown[0]:
             wait_screen("shutdown")
             if wait_shutdown[1]:
                 animation("animation1")
+                time.sleep(0.3)
+                wait_shutdown = [False, False]
                 
         elif wait_reboot[0]:
             wait_screen("reboot")
             if wait_reboot[1]:
                 animation("animation2")
+                time.sleep(0.3)
+                wait_reboot = [False, False]                
+        
+        elif wait_hotspot[0]:
+            wait_screen("hotspot", "Need")
+            if wait_hotspot[1]:
+                animation("mark_boot")
+                time.sleep(0.3)
+                wait_hotsopt = [False, False, False]
+            elif wait_hotspot[2]:
+                #animation("animation2")
+                time.sleep(0.3)
+                wait_hotsopt = [False, False, False]
+
         elif page == 0:
             time_page(semi_colon)
             notification()
@@ -152,7 +170,7 @@ def display():
         time.sleep(LOOPTIME)
 
 def button():
-    global page, wait_shutdown, wait_reboot
+    global page, wait_shutdown, wait_reboot, wait_hotspot
     while True:
         for j in range(2):
             GPIO.output(COL[j], 1)
@@ -160,16 +178,22 @@ def button():
                 if GPIO.input(ROW[i]) == 1:
                     m = ((i * 2) + j)
                     if wait_shutdown[0]: #logic maybe wrong
-                        if matrix[m] == "shutdown":
+                        if matrix[m] == "shutdown" or "reboot":
                             wait_shutdown[1] = True
-                        else: 
+                        elif matrix[m] == "hotspot" or "toggle":
                             wait_shutdown = [False, False]
                     
                     if wait_reboot[0]:#logic maybe wrong
-                        if matrix[m] == "reboot":
+                        if matrix[m] == "shutdown" or "reboot":
                             wait_reboot[1] = True
-                        else: 
+                        elif matrix[m] == "hotspot" or "toggle": 
                             wait_reboot = [False, False]
+                    
+                    if wait_hotspot[0]:#logic maybe wrong
+                        if matrix[m] == "shutdown" or "reboot":
+                            wait_hotspot[1] = True
+                        elif matrix[m] == "hotspot" or "toggle": 
+                            wait_hotspot[2] = True
 
                     if matrix[m]  == "toggle":
                         page = page + 1
@@ -177,10 +201,19 @@ def button():
                         wait_shutdown[0] = True
                     elif matrix[m] == "reboot":
                         wait_reboot[0] = True
+                    elif matrix[m] == "hotsopt":
+                        wait_hotspot[0] = True
                     else: pass
-
-
-                        
+                      
                     time.sleep(0.1)
 
             GPIO.output(COL[j], 0)
+
+t1 = Thread(target = button)
+t2 = Thread(target = display)
+
+t1.start()
+t2.start()
+
+t1.join
+t2.join

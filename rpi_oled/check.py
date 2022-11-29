@@ -1,26 +1,50 @@
+import os
+import time
+import board
+import digitalio
 import subprocess
-print(" 1: Shutdown\n 2: Reboot\n 3: Hotsopt")
-cmd = int(input("Choose command:"))
+import json
+import adafruit_ssd1306
+import RPi.GPIO as GPIO
+from datetime import datetime
+from PIL import Image, ImageDraw, ImageFont
 
-if cmd == 1:
-    print("Shutting down.....")
-    subprocess.run(["sudo", "shutdown", "now"], shell=True)
 
-elif cmd == 2:
-    print("Rebootig.....")
-    subprocess.run(["sudo", "reboot", "now"], shell=True)
+path = os.path.dirname(__file__) + '/'
 
-elif cmd == 3:
-    wlan = str(subprocess.check_output("ifconfig | grep -o \"wlan0\"", shell=True), 'utf-8')
-    if wlan == "wlan0":
-        print("Hotspot off.....")
-        subprocess.run(["sudo","nmcli","con","down","Mark","ifname","wlan0"], shell=True)
-        subprocess.run(["sudo","nmcli","radio","wifi","off"], shell=True)
-        subprocess.run(["sudo","ifconfig","wlan0","down"], shell=True)
-        
-    else: 
-        print("Hotsopt on........")
-        subprocess.run(["sudo","rfkill","unblock","wifi;","sudo","rfkill","unblock","all"], shell=True)
-        subprocess.run(["sudo","ifconfig","wlan0","up"], shell=True)
-        subprocess.run(["sudo","nmcli","radio","wifi","on"], shell=True)
-        subprocess.run(["sudo","nmcli","con","up","Mark","ifname","wlan0"], shell=True)
+oled_reset = digitalio.DigitalInOut(board.D4)
+WIDTH = 128
+HEIGHT = 64
+LOOPTIME = 1.0
+
+
+
+i2c = board.I2C()
+oled = adafruit_ssd1306.SSD1306_I2C(
+    WIDTH, HEIGHT, i2c, addr=0x3c, reset=oled_reset)
+oled.fill(0)
+oled.show()
+
+width = oled.width
+height = oled.height
+
+image = Image.new('1', (width, height))
+draw = ImageDraw.Draw(image)
+draw.rectangle((0, 0, width, height), outline=0, fill=0)
+
+icon_font = ImageFont.truetype(path + 'fonts/icomoon.ttf', 15)
+roboto_bold = ImageFont.truetype(path + 'fonts/Roboto-Bold.ttf', 16)
+roboto_regular = ImageFont.truetype(path + 'fonts/Roboto-Regular.ttf', 11)
+roboto_light = ImageFont.truetype(path + 'fonts/Roboto-Light.ttf', 15)
+
+def wait_screen( cmd2, cmd1 = "Want to"):
+    draw.rectangle((0, 0, width, height), outline=0, fill=0)
+    draw.text((4, 18), cmd1,  font=roboto_light, fill=255)
+    draw.text((4, 38), str(cmd2 + " ?").upper(),  font=roboto_light, fill=255)
+    draw.text((22, 43), "\ue918",  font=icon_font.font_variant(size=18), fill=255)
+    draw.text((91, 43), "\ue913",  font=icon_font.font_variant(size=18), fill=255)
+
+wait_screen("Shutdown")
+oled.image(image)
+oled.show()
+time.sleep(LOOPTIME)
