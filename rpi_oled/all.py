@@ -10,7 +10,7 @@ import RPi.GPIO as GPIO
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 
-#path = os.path.dirname(__file__) + '/'
+path = os.path.dirname(__file__) + '/'
 #f = open(path + "configure.json")
 #data = json.load(f)
 #f.close()
