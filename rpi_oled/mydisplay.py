@@ -16,7 +16,7 @@ path = os.path.dirname(__file__) + '/'
 oled_reset = digitalio.DigitalInOut(board.D4)
 WIDTH = 128
 HEIGHT = 64
-BORDER = 5
+
 
 LOOPTIME = 1.0
 
