@@ -10,10 +10,10 @@ import RPi.GPIO as GPIO
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 
-path = os.path.dirname(__file__) + '/'
-f = open(path + "configure.json")
-data = json.load(f)
-f.close()
+#path = os.path.dirname(__file__) + '/'
+#f = open(path + "configure.json")
+#data = json.load(f)
+#f.close()
 
 
 GPIO.setmode(GPIO.BCM)
@@ -130,6 +130,7 @@ def display():
     while True:
         if wait_shutdown[0]:
             wait_screen("shutdown")
+            
             if wait_shutdown[1]:
                 animation("animation1")
                 time.sleep(0.3)
@@ -183,20 +184,22 @@ def button():
                         elif matrix[m] == "hotspot" or "toggle":
                             wait_shutdown = [False, False]
                     
-                    if wait_reboot[0]:#logic maybe wrong
+                    elif wait_reboot[0]:#logic maybe wrong
                         if matrix[m] == "shutdown" or "reboot":
                             wait_reboot[1] = True
                         elif matrix[m] == "hotspot" or "toggle": 
                             wait_reboot = [False, False]
                     
-                    if wait_hotspot[0]:#logic maybe wrong
+                    elif wait_hotspot[0]:#logic maybe wrong
                         if matrix[m] == "shutdown" or "reboot":
                             wait_hotspot[1] = True
                         elif matrix[m] == "hotspot" or "toggle": 
                             wait_hotspot[2] = True
 
-                    if matrix[m]  == "toggle":
+                    elif matrix[m]  == "toggle":
+                        print("before page: " + page)
                         page = page + 1
+                        print("after page: " + page)
                     elif matrix[m] == "shutdown":
                         wait_shutdown[0] = True
                     elif matrix[m] == "reboot":
@@ -204,7 +207,7 @@ def button():
                     elif matrix[m] == "hotsopt":
                         wait_hotspot[0] = True
                     else: pass
-                      
+                    print("\nbutton: ", matrix[m])  
                     time.sleep(0.1)
 
             GPIO.output(COL[j], 0)
