@@ -197,9 +197,9 @@ def button():
                             wait_hotspot[2] = True
 
                     elif matrix[m]  == "toggle":
-                        print("before page: " + page)
+                        print(f"before page: {page}")
                         page = page + 1
-                        print("after page: " + page)
+                        print(f"after page: {page}")
                     elif matrix[m] == "shutdown":
                         wait_shutdown[0] = True
                     elif matrix[m] == "reboot":
@@ -207,7 +207,7 @@ def button():
                     elif matrix[m] == "hotsopt":
                         wait_hotspot[0] = True
                     else: pass
-                    print("\nbutton: ", matrix[m])  
+                    print(f"\nbutton: {matrix[m]}")  
                     time.sleep(0.1)
 
             GPIO.output(COL[j], 0)
