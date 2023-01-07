@@ -22,7 +22,7 @@ GPIO.setwarnings(False)
 oled_reset = digitalio.DigitalInOut(board.D4)
 WIDTH = 128
 HEIGHT = 64
-LOOPTIME = 1.0
+LOOPTIME = 15.0
 
 
 i2c = board.I2C()
