@@ -102,8 +102,8 @@ def notification():
 def pocketbase(i, CPU, MemUsage, Disk1, Disk2, Temperature):
     r = requests.patch(http + "/api/collections/settings/records/000000000000001", json={"latest_id": i})
     id = str(i)
-    data = {"id": id.zfill(15), "cpu_temperature": str(Temperature, 'utf8'), "cpu_usage": str(
-        CPU, 'utf8'), "disk1": str(Disk1, 'utf8'), "disk2": str(Disk2, 'utf8'), "ram_usage": str(MemUsage, 'utf8')}
+    data = {"id": id.zfill(15), "cpu_temperature": Temperature, "cpu_usage": 
+        CPU, "disk1": Disk1, "disk2": Disk2, "ram_usage": MemUsage}
     r = requests.post(http + "/api/collections/rpi_stats/records", json=data)
     
 
