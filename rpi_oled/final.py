@@ -74,14 +74,13 @@ def clean():
     draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
 def notification1(Temperature):
-    Under_voltage = subprocess.check_output('vcgencmd get_throttled', shell=True)
-    txt = str(Under_voltage, 'utf8').strip().split("=")
-    if txt[1] == "0x0":
+    Under_voltage = str(subprocess.check_output('vcgencmd get_throttled', shell=True), 'utf8').strip().split("=")
+    if Under_voltage[1] == "0x0":
         pass
     else:
         draw.text((97, 0), "\ue927",  font=icon_font, fill=255)
 
-    txt = float(str(Temperature, 'utf8')[:-2])
+    txt = float(Temperature[:-2])
     if txt <= 50:
         draw.text((113, 0), "\ue908",  font=icon_font, fill=255)
     elif txt <= 70:
