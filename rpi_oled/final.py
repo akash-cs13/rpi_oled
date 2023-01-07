@@ -99,7 +99,7 @@ def notification():
 
 
 
-def pocketbase(i, CPU, MemUsage, Disk1, Temperature):
+def pocketbase(i, CPU, MemUsage, Disk1, Disk2, Temperature):
     r = requests.patch(http + "/api/collections/settings/records/000000000000001", json={"latest_id": i})
     id = str(i)
     data = {"id": id.zfill(15), "cpu_temperature": str(Temperature, 'utf8'), "cpu_usage": str(
@@ -134,7 +134,7 @@ while True:
     else: 
         clean()
 
-    pocketbase(latest_id, CPU, MemUsage, Disk1, Temperature) 
+    pocketbase(latest_id, CPU, MemUsage, Disk1, Disk2, Temperature) 
     page , latest_id = pbinit()
     
     oled.image(image)
