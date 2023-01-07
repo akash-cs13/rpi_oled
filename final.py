@@ -6,7 +6,6 @@ import subprocess
 import requests
 import json
 import adafruit_ssd1306
-import RPi.GPIO as GPIO
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 
@@ -16,8 +15,6 @@ http = "http://192.168.0.168:4900"
 #data = json.load(f)
 #f.close()
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
 
 oled_reset = digitalio.DigitalInOut(board.D4)
 WIDTH = 128
@@ -26,8 +23,7 @@ LOOPTIME = 15.0
 
 
 i2c = board.I2C()
-oled = adafruit_ssd1306.SSD1306_I2C(
-    WIDTH, HEIGHT, i2c, addr=0x3c, reset=oled_reset)
+oled = adafruit_ssd1306.SSD1306_I2C(WIDTH, HEIGHT, i2c, addr=0x3c, reset=oled_reset)
 oled.fill(0)
 oled.show()
 
