@@ -10,7 +10,7 @@ from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 
 path = os.path.dirname(__file__) + '/'
-http = "http://192.168.0.168:4900"
+http = "http://127.0.0.1:4900"
 #f = open(path + "configure.json")
 #data = json.load(f)
 #f.close()
