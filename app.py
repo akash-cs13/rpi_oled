@@ -41,7 +41,7 @@ roboto_light = ImageFont.truetype(path + 'fonts/Roboto-Light.ttf', 15)
 
 def animation(name):
     for x in range(1, 51):
-        image = Image.open(path + f'/{name}/frame ('+str(x)+').pbm').convert('1')
+        image = Image.open(path + f'{name}/frame ('+str(x)+').pbm').convert('1')
         oled.image(image)
         oled.show()
 
